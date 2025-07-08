@@ -1,17 +1,64 @@
-import pygame, constants
+import sys
+import pygame
+from player import Player
+from constants import *
+from asteroid import Asteroid
+from asteroidfield import AsteroidField
+from shoot import Shot
 
 def main():
     pygame.init()
-    screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    
+    game_clock = pygame.time.Clock()
+    dt = 0
+    
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    
+    all_asteroids = pygame.sprite.Group()
+
+    all_shots = pygame.sprite.Group()
+    
+    Player.containers = (updatable, drawable)
+    
+    Asteroid.containers = (updatable, drawable, all_asteroids)
+    
+    AsteroidField.containers = (updatable,)
+
+    Shot.containers = (updatable, drawable, all_shots)
+    
+    player = Player(x=SCREEN_WIDTH / 2, y=SCREEN_HEIGHT / 2, all_shots=all_shots)
+    
+    asteroid_field = AsteroidField()
+    
     while True:
-        pygame.Surface.fill(screen ,(0, 0, 0))
-        pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+
+        updatable.update(dt)
+
+        for asteroid in all_asteroids:
+            if asteroid.collide(player):
+                print("Game over !")
+                # Handle collision (e.g., end game, reduce health, etc.)
+                sys.exit()
+            for shot in all_shots:
+                if asteroid.collide(shot):
+                    asteroid.split()
+
+        screen.fill("black")
+
+        for obj in drawable:
+            obj.draw(screen)
+            
+        pygame.display.flip()
+            
+        dt = game_clock.tick(60) / 1000.0
     print("Starting Asteroids! \n"
-          f"Screen width: {constants.SCREEN_WIDTH} \n"
-          f"Screen height: {constants.SCREEN_HEIGHT}")
+          f"Screen width: {SCREEN_WIDTH} \n"
+          f"Screen height: {SCREEN_HEIGHT}")
 
 
 if __name__ == "__main__":
