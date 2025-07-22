@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - feature/*
   workflow_dispatch:
 
 jobs:
@@ -23,6 +22,10 @@ jobs:
         run: |
           pip install -r requirement.txt
 
+      - name: Install pygbag
+        run: |
+          pip install pygbag
+
       - name: Build Pygbag
         run: |
           pygbag build
@@ -35,4 +38,3 @@ jobs:
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
-        with:
