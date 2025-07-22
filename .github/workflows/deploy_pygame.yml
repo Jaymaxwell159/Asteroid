@@ -3,8 +3,12 @@ on:
   push:
     branches:
       - main
-      - feature/*
   workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build-pygbag:
@@ -39,3 +43,11 @@ jobs:
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
+          commit_message: "Deploy Pygbag to GitHub Pages"
+          commit_options: --no-verify
+          enable_jekyll: false
+          enable_page_build: false
+          enable_push: true
