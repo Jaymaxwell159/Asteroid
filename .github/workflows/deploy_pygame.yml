@@ -33,7 +33,7 @@ jobs:
 
       - name: Build Pygbag
         run: |
-          pygbag build
+          pygbag build .
 
       - name: Upload Pygbag
         uses: actions/upload-artifact@v4
